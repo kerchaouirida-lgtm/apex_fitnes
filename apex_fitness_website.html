@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APEX FITNESS | Mobile-First Performance App & Web</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Teko for high-energy headings -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Teko:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Teko', 'sans-serif'],
+                    },
+                    colors: {
+                        apex: {
+                            lime: '#ccff00',
+                            limeHover: '#b3e600',
+                            orange: '#ff5500',
+                            dark: '#09090b',
+                            card: '#121216',
+                            border: '#27272a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050507;
+            color: #f4f4f5;
+            overflow-x: hidden;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ccff00;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .neon-glow {
+            box-shadow: 0 0 25px rgba(204, 255, 0, 0.25);
+        }
+        .neon-border-glow:hover {
+            box-shadow: 0 0 20px rgba(204, 255, 0, 0.15);
+            border-color: #ccff00;
+        }
+        .hero-bg {
+            background-image: linear-gradient(to bottom, rgba(9, 9, 11, 0.75) 0%, rgba(9, 9, 11, 0.95) 100%), url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* ==========================================
+           MOBILE SIMULATOR FRAME & OVERRIDES
+           ========================================== */
+        #simulator-wrapper.is-mobile-sim {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 1.25rem 0.5rem 2.5rem;
+            min-height: calc(100vh - 52px);
+            background: radial-gradient(circle at center, #18181b 0%, #050507 100%);
+        }
+
+        #app-viewport.mobile-frame {
+            width: 390px;
+            max-width: 100%;
+            height: 820px;
+            max-height: calc(100vh - 85px);
+            border: 11px solid #27272a;
+            border-radius: 46px;
+            box-shadow: 0 25px 70px -10px rgba(0, 0, 0, 0.9), 0 0 0 2px #3f3f46, 0 0 40px rgba(204, 255, 0, 0.12);
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+            background-color: #09090b;
+            scroll-behavior: smooth;
+        }
+
+        /* Force mobile layout inside 390px simulator even on wide desktop monitors */
+        #app-viewport.mobile-frame .desktop-nav,
+        #app-viewport.mobile-frame .desktop-cta {
+            display: none !important;
+        }
+        #app-viewport.mobile-frame .mobile-trigger {
+            display: flex !important;
+        }
+        #app-viewport.mobile-frame #phone-status-bar {
+            display: flex !important;
+        }
+        #app-viewport.mobile-frame #bottom-tab-bar {
+            display: flex !important;
+        }
+        #app-viewport.mobile-frame .hero-heading {
+            font-size: 3.4rem !important;
+            line-height: 0.92 !important;
+        }
+        #app-viewport.mobile-frame .hero-sub {
+            font-size: 0.925rem !important;
+        }
+        #app-viewport.mobile-frame .hero-cta-row {
+            flex-direction: column !important;
+        }
+        #app-viewport.mobile-frame .stats-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 0.75rem !important;
+        }
+        #app-viewport.mobile-frame .section-pad {
+            padding-top: 3.25rem !important;
+            padding-bottom: 3.25rem !important;
+        }
+        /* Horizontal Touch Snap Carousels inside Mobile Frame */
+        #app-viewport.mobile-frame .swipe-carousel {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            overflow-x: auto !important;
+            scroll-snap-type: x mandatory !important;
+            gap: 1rem !important;
+            padding-bottom: 1rem !important;
+            margin-left: -0.25rem;
+            padding-left: 0.25rem;
+        }
+        #app-viewport.mobile-frame .swipe-card {
+            min-width: 295px !important;
+            max-width: 295px !important;
+            scroll-snap-align: center !important;
+            flex-shrink: 0 !important;
+        }
+        #app-viewport.mobile-frame .swipe-hint {
+            display: inline-flex !important;
+        }
+        #app-viewport.mobile-frame .bmi-layout,
+        #app-viewport.mobile-frame .pricing-layout,
+        #app-viewport.mobile-frame .footer-layout,
+        #app-viewport.mobile-frame .form-2col,
+        #app-viewport.mobile-frame .form-3col {
+            grid-template-columns: 1fr !important;
+        }
+        #app-viewport.mobile-frame .pro-card-scale {
+            transform: none !important;
+        }
+        #app-viewport.mobile-frame .schedule-row {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+        #app-viewport.mobile-frame .schedule-btn {
+            width: 100% !important;
+            text-align: center !important;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-apex-lime selection:text-black">
+
+    <!-- =====================================================
+         1. TOP VIEWPORT SIMULATOR CONTROL BAR
+         ===================================================== -->
+    <div class="sticky top-0 z-50 bg-zinc-950/95 backdrop-blur-md border-b border-zinc-800 px-3 sm:px-6 h-[52px] flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-apex-lime animate-pulse"></span>
+            <span class="text-xs font-bold uppercase tracking-wider text-zinc-300 hidden sm:inline">Interactive Experience Mode:</span>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-apex-lime sm:hidden">View Mode:</span>
+        </div>
+
+        <div class="flex items-center gap-1.5 bg-zinc-900 p-1 rounded-xl border border-zinc-800">
+            <button id="btn-sim-mobile" onclick="switchViewMode('mobile')" class="px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all flex items-center gap-1.5 bg-apex-lime text-black shadow">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+                <span>📱 Mobile App View (390px)</span>
+            </button>
+            <button id="btn-sim-desktop" onclick="switchViewMode('desktop')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 text-zinc-400 hover:text-white">
+                <i class="fa-solid fa-desktop"></i>
+                <span>💻 Full Responsive View</span>
+            </button>
+        </div>
+
+        <div class="hidden lg:flex items-center gap-2 text-[11px] text-zinc-400">
+            <i class="fa-solid fa-hand-pointer text-apex-lime"></i>
+            <span>Swipe cards & test bottom navigation</span>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-16 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-xs w-full"></div>
+
+    <!-- =====================================================
+         2. SIMULATOR WRAPPER & APP VIEWPORT
+         ===================================================== -->
+    <div id="simulator-wrapper" class="is-mobile-sim">
+        <div id="app-viewport" class="mobile-frame">
+
+            <!-- iOS-Style Status Bar & Dynamic Island (Visible in Mobile App Simulator) -->
+            <div id="phone-status-bar" class="hidden sticky top-0 z-40 bg-apex-dark/95 backdrop-blur-md px-6 pt-2.5 pb-1.5 justify-between items-center text-[11px] font-bold text-white select-none">
+                <span>9:41</span>
+                <div class="w-24 h-4 bg-black rounded-full border border-zinc-800 flex items-center justify-end px-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                </div>
+                <div class="flex items-center gap-1.5 text-[10px]">
+                    <i class="fa-solid fa-signal"></i>
+                    <i class="fa-solid fa-wifi"></i>
+                    <i class="fa-solid fa-battery-full text-apex-lime text-xs"></i>
+                </div>
+            </div>
+
+            <!-- Sticky Top App Header -->
+            <header id="navbar" class="sticky top-0 z-30 transition-all duration-300 bg-apex-dark/90 backdrop-blur-md border-b border-apex-border">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between items-center h-16">
+                        <!-- Brand Logo -->
+                        <a href="#home" class="flex items-center gap-2 group">
+                            <div class="w-9 h-9 rounded-lg bg-apex-lime flex items-center justify-center text-black font-display text-xl font-bold transform group-hover:rotate-6 transition-transform">
+                                <i class="fa-solid fa-bolt"></i>
+                            </div>
+                            <span class="font-display text-2xl sm:text-3xl font-bold tracking-wider text-white">APEX<span class="text-apex-lime">FITNESS</span></span>
+                        </a>
+
+                        <!-- Desktop Links -->
+                        <nav class="desktop-nav hidden md:flex items-center space-x-7">
+                            <a href="#home" class="text-sm font-medium text-zinc-300 hover:text-apex-lime transition-colors">Home</a>
+                            <a href="#classes" class="text-sm font-medium text-zinc-300 hover:text-apex-lime transition-colors">Classes</a>
+                            <a href="#schedule" class="text-sm font-medium text-zinc-300 hover:text-apex-lime transition-colors">Schedule</a>
+                            <a href="#bmi" class="text-sm font-medium text-zinc-300 hover:text-apex-lime transition-colors">BMI & Macros</a>
+                            <a href="#trainers" class="text-sm font-medium text-zinc-300 hover:text-apex-lime transition-colors">Trainers</a>
+                            <a href="#pricing" class="text-sm font-medium text-zinc-300 hover:text-apex-lime transition-colors">Pricing</a>
+                        </nav>
+
+                        <!-- Desktop CTA -->
+                        <div class="desktop-cta hidden md:flex items-center">
+                            <button onclick="openJoinModal('Free 7-Day Trial')" class="bg-apex-lime hover:bg-apex-limeHover text-black font-bold text-xs px-5 py-2.5 rounded-lg transition-all transform hover:-translate-y-0.5 neon-glow flex items-center gap-2">
+                                <span>7-DAY PASS</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+
+                        <!-- Mobile Actions: Quick QR Pass + Slide-Out Drawer Trigger -->
+                        <div class="mobile-trigger flex md:hidden items-center gap-2">
+                            <button onclick="openJoinModal('Free 7-Day Trial')" class="bg-apex-lime/15 border border-apex-lime/40 text-apex-lime text-[11px] font-extrabold px-2.5 py-1.5 rounded-lg flex items-center gap-1">
+                                <i class="fa-solid fa-qrcode"></i>
+                                <span>PASS</span>
+                            </button>
+                            <button onclick="toggleMobileDrawer(true)" aria-label="Open Menu" class="w-9 h-9 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200 hover:text-apex-lime flex items-center justify-center">
+                                <i class="fa-solid fa-bars-staggered text-base"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Slide-Out Mobile Hamburger Drawer -->
+            <div id="mobile-drawer-backdrop" onclick="toggleMobileDrawer(false)" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden transition-opacity"></div>
+            <aside id="mobile-drawer" class="fixed top-0 right-0 bottom-0 z-50 w-72 bg-apex-card border-l border-zinc-800 p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300">
+                <div>
+                    <div class="flex items-center justify-between pb-5 border-b border-zinc-800">
+                        <span class="font-display text-2xl font-bold text-white">APEX<span class="text-apex-lime">MENU</span></span>
+                        <button onclick="toggleMobileDrawer(false)" class="w-8 h-8 rounded-lg bg-zinc-900 text-zinc-400 hover:text-white flex items-center justify-center">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <!-- Member Status Card -->
+                    <div class="mt-5 bg-zinc-900/90 border border-zinc-800 rounded-xl p-3.5 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-apex-lime/20 border border-apex-lime text-apex-lime flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-white">Guest Athlete</div>
+                            <div class="text-[11px] text-apex-lime">7-Day Free Trial Available</div>
+                        </div>
+                    </div>
+
+                    <nav class="mt-6 space-y-1.5">
+                        <a href="#home" onclick="toggleMobileDrawer(false)" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-zinc-200 hover:bg-zinc-800 hover:text-apex-lime">
+                            <i class="fa-solid fa-house w-5 text-apex-lime"></i> Home
+                        </a>
+                        <a href="#classes" onclick="toggleMobileDrawer(false)" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-zinc-200 hover:bg-zinc-800 hover:text-apex-lime">
+                            <i class="fa-solid fa-dumbbell w-5 text-apex-lime"></i> Explore Classes
+                        </a>
+                        <a href="#schedule" onclick="toggleMobileDrawer(false)" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-zinc-200 hover:bg-zinc-800 hover:text-apex-lime">
+                            <i class="fa-regular fa-calendar-check w-5 text-apex-lime"></i> Weekly Timetable
+                        </a>
+                        <a href="#bmi" onclick="toggleMobileDrawer(false)" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-zinc-200 hover:bg-zinc-800 hover:text-apex-lime">
+                            <i class="fa-solid fa-calculator w-5 text-apex-lime"></i> BMI & Macro Calc
+                        </a>
+                        <a href="#trainers" onclick="toggleMobileDrawer(false)" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-zinc-200 hover:bg-zinc-800 hover:text-apex-lime">
+                            <i class="fa-solid fa-users-gear w-5 text-apex-lime"></i> Elite Coaches
+                        </a>
+                        <a href="#pricing" onclick="toggleMobileDrawer(false)" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-zinc-200 hover:bg-zinc-800 hover:text-apex-lime">
+                            <i class="fa-solid fa-tags w-5 text-apex-lime"></i> Membership Plans
+                        </a>
+                    </nav>
+                </div>
+
+                <div class="pt-4 border-t border-zinc-800">
+                    <button onclick="toggleMobileDrawer(false); openJoinModal('Free 7-Day Trial')" class="w-full bg-apex-lime text-black font-extrabold py-3 rounded-xl text-xs tracking-wider uppercase neon-glow">
+                        CLAIM FREE 7-DAY PASS
+                    </button>
+                </div>
+            </aside>
+
+            <!-- =====================================================
+                 3. HERO SECTION (MOBILE-FIRST)
+                 ===================================================== -->
+            <section id="home" class="hero-bg pt-8 pb-14 sm:py-20 flex items-center relative overflow-hidden">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+                    <div class="max-w-3xl">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900/90 border border-zinc-700 text-apex-lime text-[11px] font-bold uppercase tracking-widest mb-4">
+                            <span class="w-2 h-2 rounded-full bg-apex-lime animate-ping"></span>
+                            24/7 Biometric Smart Gym
+                        </div>
+                        
+                        <h1 class="hero-heading font-display text-5xl sm:text-7xl lg:text-8xl font-bold uppercase tracking-tight leading-[0.92] text-white mb-4">
+                            FORGE YOUR <br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-apex-lime via-lime-300 to-apex-orange">ULTIMATE PHYSIQUE</span>
+                        </h1>
+                        
+                        <p class="hero-sub text-zinc-300 text-sm sm:text-lg max-w-2xl mb-7 font-normal leading-relaxed">
+                            Experience elite strength equipment, high-octane group conditioning, and world-class coaching right from your pocket. Reserve classes and track macros in real time.
+                        </p>
+
+                        <div class="hero-cta-row flex flex-col sm:flex-row gap-3 mb-10">
+                            <button onclick="openJoinModal('Free 7-Day Trial')" class="bg-apex-lime hover:bg-apex-limeHover text-black font-extrabold px-6 py-3.5 rounded-xl text-sm tracking-wide transition-all neon-glow flex items-center justify-center gap-2">
+                                <span>START 7-DAY FREE TRIAL</span>
+                                <i class="fa-solid fa-bolt"></i>
+                            </button>
+                            <a href="#classes" class="bg-zinc-900/85 hover:bg-zinc-800 text-white border border-zinc-700 font-bold px-6 py-3.5 rounded-xl text-sm tracking-wide transition-all flex items-center justify-center gap-2">
+                                <span>SWIPE CLASSES</span>
+                                <i class="fa-solid fa-dumbbell text-apex-lime"></i>
+                            </a>
+                        </div>
+
+                        <!-- Key Gym Stats -->
+                        <div class="stats-grid grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6 pt-6 border-t border-zinc-800/80">
+                            <div class="bg-zinc-900/70 backdrop-blur-sm p-3.5 rounded-xl border border-zinc-800">
+                                <div class="font-display text-3xl sm:text-4xl font-bold text-apex-lime">2,500+</div>
+                                <div class="text-[11px] text-zinc-400 font-semibold uppercase tracking-wider">Active Athletes</div>
+                            </div>
+                            <div class="bg-zinc-900/70 backdrop-blur-sm p-3.5 rounded-xl border border-zinc-800">
+                                <div class="font-display text-3xl sm:text-4xl font-bold text-white">35+</div>
+                                <div class="text-[11px] text-zinc-400 font-semibold uppercase tracking-wider">Pro Coaches</div>
+                            </div>
+                            <div class="bg-zinc-900/70 backdrop-blur-sm p-3.5 rounded-xl border border-zinc-800">
+                                <div class="font-display text-3xl sm:text-4xl font-bold text-apex-orange">60+</div>
+                                <div class="text-[11px] text-zinc-400 font-semibold uppercase tracking-wider">Classes / Wk</div>
+                            </div>
+                            <div class="bg-zinc-900/70 backdrop-blur-sm p-3.5 rounded-xl border border-zinc-800">
+                                <div class="font-display text-3xl sm:text-4xl font-bold text-white">24/7</div>
+                                <div class="text-[11px] text-zinc-400 font-semibold uppercase tracking-wider">App Access</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =====================================================
+                 4. TOUCH-SWIPEABLE CLASS EXPLORER
+                 ===================================================== -->
+            <section id="classes" class="section-pad py-14 sm:py-24 bg-apex-dark relative">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between mb-6">
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-apex-lime font-bold text-xs uppercase tracking-widest">High-Octane Training</span>
+                                <span class="swipe-hint hidden md:hidden items-center gap-1 text-[11px] text-zinc-400 font-semibold">
+                                    <i class="fa-solid fa-arrows-left-right text-apex-lime"></i> Swipe cards
+                                </span>
+                            </div>
+                            <h2 class="font-display text-4xl sm:text-6xl font-bold uppercase text-white mt-1">EXPLORE <span class="text-apex-lime">CLASSES</span></h2>
+                        </div>
+                        <p class="text-zinc-400 max-w-md mt-1 md:mt-0 text-xs sm:text-sm">
+                            Filter by training discipline and swipe horizontally on mobile to reserve your spot.
+                        </p>
+                    </div>
+
+                    <!-- Horizontal Scrollable Filter Pills -->
+                    <div id="class-filters" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-3 mb-6">
+                        <button data-filter="all" class="filter-btn shrink-0 active bg-apex-lime text-black font-bold px-4 py-2 rounded-xl text-xs transition-all">All Classes</button>
+                        <button data-filter="strength" class="filter-btn shrink-0 bg-apex-card hover:bg-zinc-800 text-zinc-300 border border-apex-border font-semibold px-4 py-2 rounded-xl text-xs transition-all">Strength</button>
+                        <button data-filter="hiit" class="filter-btn shrink-0 bg-apex-card hover:bg-zinc-800 text-zinc-300 border border-apex-border font-semibold px-4 py-2 rounded-xl text-xs transition-all">HIIT & Metcon</button>
+                        <button data-filter="boxing" class="filter-btn shrink-0 bg-apex-card hover:bg-zinc-800 text-zinc-300 border border-apex-border font-semibold px-4 py-2 rounded-xl text-xs transition-all">Boxing</button>
+                        <button data-filter="spin" class="filter-btn shrink-0 bg-apex-card hover:bg-zinc-800 text-zinc-300 border border-apex-border font-semibold px-4 py-2 rounded-xl text-xs transition-all">Spin</button>
+                        <button data-filter="yoga" class="filter-btn shrink-0 bg-apex-card hover:bg-zinc-800 text-zinc-300 border border-apex-border font-semibold px-4 py-2 rounded-xl text-xs transition-all">Mobility</button>
+                    </div>
+
+                    <!-- Classes Container (Swipeable on Mobile / Grid on Desktop) -->
+                    <div id="classes-grid" class="swipe-carousel flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-7 overflow-x-auto md:overflow-visible snap-x snap-mandatory no-scrollbar pb-3">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- =====================================================
+                 5. WEEKLY SCHEDULE TABS
+                 ===================================================== -->
+            <section id="schedule" class="section-pad py-14 sm:py-24 bg-apex-card border-y border-apex-border">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="mb-6">
+                        <span class="text-apex-orange font-bold text-xs uppercase tracking-widest">Live Roster</span>
+                        <h2 class="font-display text-4xl sm:text-6xl font-bold uppercase text-white mt-1">WEEKLY <span class="text-apex-lime">TIMETABLE</span></h2>
+                        <p class="text-zinc-400 mt-1 text-xs sm:text-sm">Tap a day below to inspect class times, coaches, and studio zones.</p>
+                    </div>
+
+                    <!-- Scrollable Day Tabs on Mobile -->
+                    <div id="schedule-tabs" class="flex lg:grid lg:grid-cols-7 gap-2 overflow-x-auto no-scrollbar pb-3 mb-5">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Schedule List -->
+                    <div id="schedule-content" class="bg-apex-dark border border-apex-border rounded-2xl overflow-hidden shadow-2xl">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- =====================================================
+                 6. LIVE BMI & CALORIE MACRO CALCULATOR
+                 ===================================================== -->
+            <section id="bmi" class="section-pad py-14 sm:py-24 bg-apex-dark relative overflow-hidden">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="bmi-layout grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        
+                        <!-- Calculator Form -->
+                        <div class="lg:col-span-7 bg-apex-card border border-apex-border p-5 sm:p-8 rounded-2xl shadow-xl">
+                            <span class="text-apex-lime font-bold text-xs uppercase tracking-widest">Biometric Lab</span>
+                            <h2 class="font-display text-4xl sm:text-5xl font-bold uppercase text-white mt-1 mb-2">BMI & MACRO <span class="text-apex-lime">CALCULATOR</span></h2>
+                            <p class="text-zinc-400 text-xs sm:text-sm mb-6">Calculate your Body Mass Index (BMI) and Total Daily Energy Expenditure (TDEE) for fat loss or muscle gain.</p>
+
+                            <form id="bmi-form" class="space-y-4">
+                                <div class="form-3col grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                                    <div>
+                                        <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">Biological Sex</label>
+                                        <select id="calc-gender" class="w-full bg-zinc-900 border border-zinc-700 focus:border-apex-lime rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">Age (Years)</label>
+                                        <input type="number" id="calc-age" value="28" min="14" max="100" required class="w-full bg-zinc-900 border border-zinc-700 focus:border-apex-lime rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">Weight (kg)</label>
+                                        <input type="number" id="calc-weight" value="78" min="30" max="250" step="0.5" required class="w-full bg-zinc-900 border border-zinc-700 focus:border-apex-lime rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                                    </div>
+                                </div>
+
+                                <div class="form-2col grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                    <div>
+                                        <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">Height (cm)</label>
+                                        <input type="number" id="calc-height" value="180" min="120" max="240" required class="w-full bg-zinc-900 border border-zinc-700 focus:border-apex-lime rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">Training Frequency</label>
+                                        <select id="calc-activity" class="w-full bg-zinc-900 border border-zinc-700 focus:border-apex-lime rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                                            <option value="1.2">Sedentary (Little exercise)</option>
+                                            <option value="1.375">Light (1-3 days/week)</option>
+                                            <option value="1.55" selected>Moderate (3-5 days/week)</option>
+                                            <option value="1.725">Hard (6-7 days/week)</option>
+                                            <option value="1.9">Athlete (2x daily training)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="w-full bg-apex-lime hover:bg-apex-limeHover text-black font-extrabold py-3.5 rounded-xl text-sm tracking-wide transition-all neon-glow flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-calculator"></i>
+                                    <span>UPDATE MY BIOMETRICS</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Live Results Dashboard -->
+                        <div class="lg:col-span-5 space-y-4">
+                            <div class="bg-gradient-to-br from-zinc-900 to-apex-card border border-zinc-800 p-5 sm:p-6 rounded-2xl">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div>
+                                        <span class="text-[11px] font-bold uppercase tracking-widest text-zinc-400">Your Body Mass Index</span>
+                                        <div class="flex items-baseline gap-2.5 mt-1">
+                                            <span id="res-bmi" class="font-display text-5xl font-bold text-apex-lime">24.1</span>
+                                            <span id="res-bmi-status" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Normal Weight</span>
+                                        </div>
+                                    </div>
+                                    <div class="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-apex-lime text-lg">
+                                        <i class="fa-solid fa-heart-pulse"></i>
+                                    </div>
+                                </div>
+
+                                <div class="h-2.5 w-full rounded-full bg-zinc-800 overflow-hidden flex">
+                                    <div class="w-1/4 bg-sky-400 h-full"></div>
+                                    <div class="w-1/4 bg-emerald-400 h-full"></div>
+                                    <div class="w-1/4 bg-amber-400 h-full"></div>
+                                    <div class="w-1/4 bg-rose-500 h-full"></div>
+                                </div>
+                                <div class="flex justify-between text-[10px] text-zinc-500 font-semibold mt-1">
+                                    <span>Under</span>
+                                    <span>Normal</span>
+                                    <span>Over</span>
+                                    <span>Obese</span>
+                                </div>
+                            </div>
+
+                            <!-- Daily Calorie Targets -->
+                            <div class="bg-apex-card border border-apex-border p-5 sm:p-6 rounded-2xl">
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-300 mb-3 flex items-center gap-2">
+                                    <i class="fa-solid fa-fire text-apex-orange"></i>
+                                    Daily Calorie Targets (kcal)
+                                </h3>
+
+                                <div class="grid grid-cols-3 gap-2.5">
+                                    <div class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl text-center">
+                                        <div class="text-[10px] text-zinc-400 font-semibold">Shred (-500)</div>
+                                        <div id="res-cut" class="font-display text-2xl sm:text-3xl font-bold text-sky-400 mt-0.5">2,295</div>
+                                    </div>
+                                    <div class="bg-zinc-900 border border-apex-lime/40 p-3 rounded-xl text-center">
+                                        <div class="text-[10px] text-apex-lime font-bold">Maintain</div>
+                                        <div id="res-maintain" class="font-display text-2xl sm:text-3xl font-bold text-white mt-0.5">2,795</div>
+                                    </div>
+                                    <div class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl text-center">
+                                        <div class="text-[10px] text-zinc-400 font-semibold">Bulk (+350)</div>
+                                        <div id="res-bulk" class="font-display text-2xl sm:text-3xl font-bold text-apex-orange mt-0.5">3,145</div>
+                                    </div>
+                                </div>
+
+                                <p id="res-recommendation" class="text-xs text-zinc-400 mt-4 leading-relaxed bg-zinc-900/60 p-3 rounded-lg border border-zinc-800">
+                                    <strong class="text-apex-lime">Coach Tip:</strong> Pair your maintenance intake with <strong>METCON INFERNO</strong> 4x/week for rapid body recomposition.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- =====================================================
+                 7. SWIPEABLE TRAINERS SHOWCASE
+                 ===================================================== -->
+            <section id="trainers" class="section-pad py-14 sm:py-24 bg-apex-card border-t border-apex-border">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8">
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-apex-lime font-bold text-xs uppercase tracking-widest">World-Class Coaching</span>
+                                <span class="swipe-hint hidden md:hidden items-center gap-1 text-[11px] text-zinc-400 font-semibold">
+                                    <i class="fa-solid fa-arrows-left-right text-apex-lime"></i> Swipe coaches
+                                </span>
+                            </div>
+                            <h2 class="font-display text-4xl sm:text-6xl font-bold uppercase text-white mt-1">MEET THE <span class="text-apex-lime">ELITE SQUAD</span></h2>
+                        </div>
+                        <p class="text-zinc-400 max-w-md mt-1 md:mt-0 text-xs sm:text-sm">
+                            Tap any coach card to book a private 1-on-1 performance assessment.
+                        </p>
+                    </div>
+
+                    <!-- Swipeable on Mobile / 4-Col Grid on Desktop -->
+                    <div class="swipe-carousel flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible snap-x snap-mandatory no-scrollbar pb-3">
+                        
+                        <!-- Trainer 1 -->
+                        <div class="swipe-card min-w-[280px] sm:min-w-0 snap-center group bg-apex-dark rounded-2xl overflow-hidden border border-apex-border neon-border-glow transition-all flex flex-col">
+                            <div class="relative h-64 overflow-hidden bg-zinc-900">
+                                <img src="https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&w=600&q=80" alt="Marcus Vance" onerror="this.src='https://placehold.co/600x750/121216/ccff00?text=MARCUS+VANCE'" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute inset-0 bg-gradient-to-t from-apex-dark via-transparent to-transparent"></div>
+                                <span class="absolute top-3 left-3 bg-apex-lime text-black text-[10px] font-extrabold px-2.5 py-1 rounded uppercase">Strength Lead</span>
+                            </div>
+                            <div class="p-5 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <h3 class="font-display text-2xl font-bold text-white tracking-wide">MARCUS VANCE</h3>
+                                    <p class="text-zinc-400 text-xs leading-relaxed mt-1">CSCS Certified. Former D1 sprinter specializing in explosive powerlifting and hypertrophy.</p>
+                                </div>
+                                <div class="flex items-center justify-between pt-4 mt-4 border-t border-zinc-800">
+                                    <div class="flex space-x-2">
+                                        <button onclick="showToast('Opening Marcus Vance Instagram')" class="w-7 h-7 rounded-lg bg-zinc-900 hover:bg-apex-lime hover:text-black text-zinc-400 flex items-center justify-center text-xs"><i class="fa-brands fa-instagram"></i></button>
+                                        <button onclick="showToast('Opening Marcus Vance YouTube')" class="w-7 h-7 rounded-lg bg-zinc-900 hover:bg-apex-lime hover:text-black text-zinc-400 flex items-center justify-center text-xs"><i class="fa-brands fa-youtube"></i></button>
+                                    </div>
+                                    <button onclick="openBookingModal('1-on-1 Assessment with Marcus Vance', 'Private Session • 60 Min')" class="text-xs font-bold text-apex-lime hover:underline">Book 1-on-1 →</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trainer 2 -->
+                        <div class="swipe-card min-w-[280px] sm:min-w-0 snap-center group bg-apex-dark rounded-2xl overflow-hidden border border-apex-border neon-border-glow transition-all flex flex-col">
+                            <div class="relative h-64 overflow-hidden bg-zinc-900">
+                                <img src="https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&w=600&q=80" alt="Elena Rostova" onerror="this.src='https://placehold.co/600x750/121216/ccff00?text=ELENA+ROSTOVA'" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute inset-0 bg-gradient-to-t from-apex-dark via-transparent to-transparent"></div>
+                                <span class="absolute top-3 left-3 bg-apex-orange text-white text-[10px] font-extrabold px-2.5 py-1 rounded uppercase">HIIT & Combat</span>
+                            </div>
+                            <div class="p-5 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <h3 class="font-display text-2xl font-bold text-white tracking-wide">ELENA ROSTOVA</h3>
+                                    <p class="text-zinc-400 text-xs leading-relaxed mt-1">Undefeated Muay Thai champion & metabolic conditioning architect. High-cadence calorie torching.</p>
+                                </div>
+                                <div class="flex items-center justify-between pt-4 mt-4 border-t border-zinc-800">
+                                    <div class="flex space-x-2">
+                                        <button onclick="showToast('Opening Elena Rostova Instagram')" class="w-7 h-7 rounded-lg bg-zinc-900 hover:bg-apex-lime hover:text-black text-zinc-400 flex items-center justify-center text-xs"><i class="fa-brands fa-instagram"></i></button>
+                                        <button onclick="showToast('Opening Elena Rostova TikTok')" class="w-7 h-7 rounded-lg bg-zinc-900 hover:bg-apex-lime hover:text-black text-zinc-400 flex items-center justify-center text-xs"><i class="fa-brands fa-tiktok"></i></button>
+                                    </div>
+                                    <button onclick="openBookingModal('1-on-1 Padwork with Elena Rostova', 'Private Session • 60 Min')" class="text-xs font-bold text-apex-lime hover:underline">Book 1-on-1 →</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trainer 3 -->
+                        <div class="swipe-card min-w-[280px] sm:min-w-0 snap-center group bg-apex-dark rounded-2xl overflow-hidden border border-apex-border neon-border-glow transition-all flex flex-col">
+                            <div class="relative h-64 overflow-hidden bg-zinc-900">
+                                <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=600&q=80" alt="Devon Brooks" onerror="this.src='https://placehold.co/600x750/121216/ccff00?text=DEVON+BROOKS'" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute inset-0 bg-gradient-to-t from-apex-dark via-transparent to-transparent"></div>
+                                <span class="absolute top-3 left-3 bg-apex-lime text-black text-[10px] font-extrabold px-2.5 py-1 rounded uppercase">Hypertrophy</span>
+                            </div>
+                            <div class="p-5 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <h3 class="font-display text-2xl font-bold text-white tracking-wide">DEVON BROOKS</h3>
+                                    <p class="text-zinc-400 text-xs leading-relaxed mt-1">IFBB Classic Physique competitor & nutritionist. Sculpting symmetrical muscle mass safely.</p>
+                                </div>
+                                <div class="flex items-center justify-between pt-4 mt-4 border-t border-zinc-800">
+                                    <div class="flex space-x-2">
+                                        <button onclick="showToast('Opening Devon Brooks Instagram')" class="w-7 h-7 rounded-lg bg-zinc-900 hover:bg-apex-lime hover:text-black text-zinc-400 flex items-center justify-center text-xs"><i class="fa-brands fa-instagram"></i></button>
+                                        <button onclick="showToast('Opening Devon Brooks X')" class="w-7 h-7 rounded-lg bg-zinc-900 hover:bg-apex-lime hover:text-black text-zinc-400 flex items-center justify-center text-xs"><i class="fa-brands fa-x-twitter"></i></button>
+                                    </div>
+                                    <button onclick="openBookingModal('Physique Consult with Devon Brooks', 'Private Session • 60 Min')" class="text-xs font-bold text-apex-lime hover:underline">Book 1-on-1 →</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trainer 4 -->
+                        <div class="swipe-card min-w-[280px] sm:min-w-0 snap-center group bg-apex-dark rounded-2xl overflow-hidden border border-apex-border neon-border-glow transition-all flex flex-col">
+                            <div class="relative h-64 overflow-hidden bg-zinc-900">
+                                <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80" alt="Maya Lin" onerror="this.src='https://placehold.co/600x750/121216/ccff00?text=MAYA+LIN'" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute inset-0 bg-gradient-to-t from-apex-dark via-transparent to-transparent"></div>
+                                <span class="absolute top-3 left-3 bg-zinc-800 text-apex-lime border border-apex-lime/40 text-[10px] font-extrabold px-2.5 py-1 rounded uppercase">Mobility & Spin</span>
+                            </div>
+                            <div class="p-5 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <h3 class="font-display text-2xl font-bold text-white tracking-wide">MAYA LIN</h3>
+                                    <p class="text-zinc-400 text-xs leading-relaxed mt-1">Doctor of Physical Therapy (DPT) & RYT-500 instructor. Joint longevity and rhythm spin.</p>
+                                </div>
+                                <div class="flex items-center justify-between pt-4 mt-4 border-t border-zinc-800">
+                                    <div class="flex space-x-2">
+                                        <button onclick="showToast('Opening Maya Lin Instagram')" class="w-7 h-7 rounded-lg bg-zinc-900 hover:bg-apex-lime hover:text-black text-zinc-400 flex items-center justify-center text-xs"><i class="fa-brands fa-instagram"></i></button>
+                                        <button onclick="showToast('Opening Maya Lin YouTube')" class="w-7 h-7 rounded-lg bg-zinc-900 hover:bg-apex-lime hover:text-black text-zinc-400 flex items-center justify-center text-xs"><i class="fa-brands fa-youtube"></i></button>
+                                    </div>
+                                    <button onclick="openBookingModal('Mobility Screen with Maya Lin', 'Private Session • 60 Min')" class="text-xs font-bold text-apex-lime hover:underline">Book 1-on-1 →</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- =====================================================
+                 8. DYNAMIC MEMBERSHIP PRICING
+                 ===================================================== -->
+            <section id="pricing" class="section-pad py-14 sm:py-24 bg-apex-dark border-t border-apex-border">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center max-w-3xl mx-auto mb-10">
+                        <span class="text-apex-lime font-bold text-xs uppercase tracking-widest">Zero Hidden Fees</span>
+                        <h2 class="font-display text-4xl sm:text-6xl font-bold uppercase text-white mt-1">MEMBERSHIP <span class="text-apex-lime">TIERS</span></h2>
+                        <p class="text-zinc-400 mt-1 text-xs sm:text-sm">Switch to annual billing and save 20% instantly.</p>
+
+                        <!-- Monthly / Annual Toggle -->
+                        <div class="mt-5 inline-flex items-center gap-2 bg-apex-card p-1.5 rounded-2xl border border-apex-border">
+                            <button id="toggle-monthly" onclick="setBilling('monthly')" class="px-4 py-2 rounded-xl text-xs font-bold bg-apex-lime text-black transition-all">Monthly</button>
+                            <button id="toggle-annual" onclick="setBilling('annual')" class="px-4 py-2 rounded-xl text-xs font-bold text-zinc-400 hover:text-white transition-all flex items-center gap-1.5">
+                                <span>Annual</span>
+                                <span class="bg-apex-orange text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">-20%</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="pricing-layout grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+                        <!-- Basic Tier -->
+                        <div class="bg-apex-card border border-apex-border rounded-2xl p-6 flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-display text-3xl font-bold text-white uppercase">BASIC IRON</h3>
+                                    <span class="text-[10px] font-bold uppercase px-2.5 py-1 rounded-full bg-zinc-800 text-zinc-300">Starter</span>
+                                </div>
+                                <div class="my-5 flex items-baseline gap-1">
+                                    <span class="text-2xl font-extrabold text-white">$</span>
+                                    <span id="price-basic" class="font-display text-6xl font-bold text-white leading-none">49</span>
+                                    <span class="text-zinc-400 text-xs font-medium">/ month</span>
+                                </div>
+                                <p id="sub-basic" class="text-[11px] text-zinc-500 -mt-4 mb-5">Billed monthly. Cancel anytime.</p>
+
+                                <ul class="space-y-3 text-xs text-zinc-300 border-t border-zinc-800 pt-5">
+                                    <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-apex-lime"></i> 24/7 Biometric Gym Access</li>
+                                    <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-apex-lime"></i> Free Weights & Olympic Platforms</li>
+                                    <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-apex-lime"></i> APEX Mobile App & Macro Tracker</li>
+                                    <li class="flex items-center gap-2.5 text-zinc-600 line-through"><i class="fa-solid fa-xmark"></i> Unlimited Group Classes</li>
+                                </ul>
+                            </div>
+                            <button onclick="openJoinModal('BASIC IRON Plan')" class="w-full mt-6 bg-zinc-800 hover:bg-apex-lime hover:text-black text-white font-bold py-3.5 rounded-xl text-xs transition-all">
+                                SELECT BASIC
+                            </button>
+                        </div>
+
+                        <!-- Pro Tier -->
+                        <div class="pro-card-scale bg-gradient-to-b from-zinc-900 to-apex-card border-2 border-apex-lime rounded-2xl p-6 flex flex-col justify-between relative shadow-2xl lg:-translate-y-3">
+                            <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-apex-lime text-black font-extrabold text-[10px] uppercase tracking-widest px-3.5 py-1 rounded-full">
+                                Most Popular
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-display text-3xl font-bold text-white uppercase">APEX PRO</h3>
+                                    <span class="text-[10px] font-bold uppercase px-2.5 py-1 rounded-full bg-apex-lime/20 text-apex-lime">All-Access</span>
+                                </div>
+                                <div class="my-5 flex items-baseline gap-1">
+                                    <span class="text-2xl font-extrabold text-apex-lime">$</span>
+                                    <span id="price-pro" class="font-display text-6xl font-bold text-apex-lime leading-none">89</span>
+                                    <span class="text-zinc-400 text-xs font-medium">/ month</span>
+                                </div>
+                                <p id="sub-pro" class="text-[11px] text-zinc-400 -mt-4 mb-5">Billed monthly. Cancel anytime.</p>
+
+                                <ul class="space-y-3 text-xs text-zinc-200 border-t border-zinc-800 pt-5">
+                                    <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-apex-lime"></i> <strong>Everything in Basic Iron</strong></li>
+                                    <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-apex-lime"></i> Unlimited Group Classes (60+/wk)</li>
+                                    <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-apex-lime"></i> Infrared Sauna & Cold Plunge</li>
+                                    <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-apex-lime"></i> Monthly InBody 3D Body Scan</li>
+                                </ul>
+                            </div>
+                            <button onclick="openJoinModal('APEX PRO Plan')" class="w-full mt-6 bg-apex-lime hover:bg-apex-limeHover text-black font-extrabold py-3.5 rounded-xl text-xs transition-all neon-glow">
+                                SELECT APEX PRO
+                            </button>
+                        </div>
+
+                        <!-- Elite Tier -->
+                        <div class="bg-apex-card border border-apex-border rounded-2xl p-6 flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-display text-3xl font-bold text-white uppercase">APEX ELITE</h3>
+                                    <span class="text-[10px] font-bold uppercase px-2.5 py-1 rounded-full bg-apex-orange/20 text-apex-orange">VIP Coaching</span>
+                                </div>
+                                <div class="my-5 flex items-baseline gap-1">
+                                    <span class="text-2xl font-extrabold text-white">$</span>
+                                    <span id="price-elite" class="font-display text-6xl font-bold text-white leading-none">149</span>
+                                    <span class="text-zinc-400 text-xs font-medium">/ month</span>
+                                </div>
+                                <p id="sub-elite" class="text-[11px] text-zinc-500 -mt-4 mb-5">Billed monthly. Cancel anytime.</p>
+
+                                <ul class="space-y-3 text-xs text-zinc-300 border-t border-zinc-800 pt-5">
+                                    <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-apex-orange"></i> <strong>Everything in APEX PRO</strong></li>
+                                    <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-apex-orange"></i> 4x Private 1-on-1 PT Sessions / Mo</li>
+                                    <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-apex-orange"></i> Custom Nutrition & Macro Blueprint</li>
+                                    <li class="flex items-center gap-2.5"><i class="fa-solid fa-check text-apex-orange"></i> Unlimited Cryotherapy Recovery</li>
+                                </ul>
+                            </div>
+                            <button onclick="openJoinModal('APEX ELITE Plan')" class="w-full mt-6 bg-zinc-800 hover:bg-apex-orange hover:text-white text-white font-bold py-3.5 rounded-xl text-xs transition-all">
+                                SELECT APEX ELITE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="bg-black border-t border-zinc-900 pt-12 pb-24 md:pb-12 text-zinc-400">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="footer-layout grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+                        <div>
+                            <a href="#home" class="flex items-center gap-2 mb-3">
+                                <div class="w-7 h-7 rounded-lg bg-apex-lime flex items-center justify-center text-black font-display text-lg font-bold">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <span class="font-display text-2xl font-bold tracking-wider text-white">APEX<span class="text-apex-lime">FITNESS</span></span>
+                            </a>
+                            <p class="text-xs text-zinc-500 leading-relaxed">
+                                25,000 sq. ft. of premier strength platforms, turf conditioning lanes, combat rings, and recovery labs.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Facility Hours</h4>
+                            <ul class="space-y-1.5 text-xs">
+                                <li class="flex justify-between"><span class="text-zinc-500">Biometric Access:</span> <span class="text-apex-lime font-bold">24/7/365</span></li>
+                                <li class="flex justify-between"><span class="text-zinc-500">Staffed Hours:</span> <span class="text-zinc-300">5 AM – 11 PM</span></li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">HQ Location</h4>
+                            <p class="text-xs text-zinc-400">742 Ironworks District Blvd, Austin, TX 78701 • (512) 555-0199</p>
+                        </div>
+
+                        <div>
+                            <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Join The Dispatch</h4>
+                            <form id="newsletter-form" class="flex">
+                                <input type="email" required placeholder="Your email..." class="w-full bg-zinc-900 border border-zinc-800 rounded-l-lg px-3 py-2 text-xs text-white focus:outline-none">
+                                <button type="submit" class="bg-apex-lime text-black font-bold px-4 rounded-r-lg text-xs">JOIN</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="border-t border-zinc-900 pt-6 text-center text-[11px] text-zinc-600">
+                        &copy; 2026 APEX FITNESS PERFORMANCE LLC. All Rights Reserved.
+                    </div>
+                </div>
+            </footer>
+
+            <!-- =====================================================
+                 9. STICKY MOBILE BOTTOM NAVIGATION BAR
+                 ===================================================== -->
+            <nav id="bottom-tab-bar" class="sticky bottom-0 left-0 right-0 z-40 bg-zinc-950/95 backdrop-blur-lg border-t border-zinc-800 px-2 py-1.5 flex md:hidden justify-around items-center">
+                <a href="#home" onclick="setActiveTab(this)" class="bottom-tab flex flex-col items-center py-1 px-2 text-apex-lime">
+                    <i class="fa-solid fa-house text-sm"></i>
+                    <span class="text-[10px] font-bold mt-1">Home</span>
+                </a>
+                <a href="#classes" onclick="setActiveTab(this)" class="bottom-tab flex flex-col items-center py-1 px-2 text-zinc-400 hover:text-white">
+                    <i class="fa-solid fa-dumbbell text-sm"></i>
+                    <span class="text-[10px] font-semibold mt-1">Classes</span>
+                </a>
+                <a href="#schedule" onclick="setActiveTab(this)" class="bottom-tab flex flex-col items-center py-1 px-2 text-zinc-400 hover:text-white">
+                    <i class="fa-regular fa-calendar-days text-sm"></i>
+                    <span class="text-[10px] font-semibold mt-1">Schedule</span>
+                </a>
+                <a href="#bmi" onclick="setActiveTab(this)" class="bottom-tab flex flex-col items-center py-1 px-2 text-zinc-400 hover:text-white">
+                    <i class="fa-solid fa-calculator text-sm"></i>
+                    <span class="text-[10px] font-semibold mt-1">BMI Calc</span>
+                </a>
+                <button onclick="openJoinModal('Free 7-Day Trial')" class="flex flex-col items-center py-1 px-3 bg-apex-lime text-black rounded-xl font-extrabold shadow">
+                    <i class="fa-solid fa-bolt text-sm"></i>
+                    <span class="text-[10px] font-extrabold mt-0.5">Join</span>
+                </button>
+            </nav>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         MODALS (JOIN PASS & CLASS BOOKING)
+         ===================================================== -->
+    <div id="join-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="bg-apex-card border border-zinc-700 rounded-2xl max-w-md w-full p-6 relative shadow-2xl">
+            <button onclick="closeJoinModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white w-8 h-8 rounded-lg bg-zinc-900 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div id="join-form-container">
+                <div class="inline-block px-3 py-1 rounded-full bg-apex-lime/10 border border-apex-lime/30 text-apex-lime text-[11px] font-bold uppercase mb-2" id="join-modal-badge">
+                    Free 7-Day Trial
+                </div>
+                <h3 class="font-display text-3xl font-bold text-white uppercase">ACTIVATE YOUR <span class="text-apex-lime">MOBILE PASS</span></h3>
+                <p class="text-zinc-400 text-xs mt-1 mb-5">Get instant QR gate entry and complimentary InBody 3D assessment.</p>
+
+                <form id="join-form" class="space-y-3.5">
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Full Name *</label>
+                        <input type="text" id="join-name" required placeholder="Alex Mercer" class="w-full bg-zinc-900 border border-zinc-700 focus:border-apex-lime rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Email Address *</label>
+                        <input type="email" id="join-email" required placeholder="alex@domain.com" class="w-full bg-zinc-900 border border-zinc-700 focus:border-apex-lime rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Membership Tier</label>
+                        <select id="join-plan" class="w-full bg-zinc-900 border border-zinc-700 focus:border-apex-lime rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                            <option value="Free 7-Day Trial">Free 7-Day Trial ($0)</option>
+                            <option value="BASIC IRON Plan">Basic Iron</option>
+                            <option value="APEX PRO Plan">Apex Pro (Most Popular)</option>
+                            <option value="APEX ELITE Plan">Apex Elite VIP</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full mt-2 bg-apex-lime hover:bg-apex-limeHover text-black font-extrabold py-3.5 rounded-xl text-xs tracking-wide transition-all neon-glow">
+                        GENERATE MY QR PASS NOW
+                    </button>
+                </form>
+            </div>
+
+            <div id="join-success" class="hidden text-center py-4">
+                <div class="w-14 h-14 rounded-full bg-apex-lime/20 border border-apex-lime text-apex-lime flex items-center justify-center mx-auto mb-3 text-2xl">
+                    <i class="fa-solid fa-qrcode"></i>
+                </div>
+                <h3 class="font-display text-3xl font-bold text-white uppercase">PASS <span class="text-apex-lime">ACTIVATED!</span></h3>
+                <p id="join-success-text" class="text-zinc-300 text-xs mt-1"></p>
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3.5 mt-4 text-xs text-zinc-400">
+                    <strong class="text-white">QR Gate Code:</strong> <span class="text-apex-lime font-mono">APX-2026-VIP88</span>
+                </div>
+                <button onclick="closeJoinModal()" class="mt-5 bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs">
+                    DONE
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="booking-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="bg-apex-card border border-zinc-700 rounded-2xl max-w-md w-full p-6 relative shadow-2xl">
+            <button onclick="closeBookingModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white w-8 h-8 rounded-lg bg-zinc-900 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <span class="text-[11px] font-bold uppercase tracking-widest text-apex-lime">Instant Class Spot</span>
+            <h3 id="booking-title" class="font-display text-3xl font-bold text-white uppercase mt-1">APEX HIIT</h3>
+            <p id="booking-meta" class="text-zinc-400 text-xs mb-5">45 Min • Extreme Intensity</p>
+
+            <form id="booking-form" class="space-y-3.5">
+                <div>
+                    <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Your Name *</label>
+                    <input type="text" id="book-name" required placeholder="Enter your name" class="w-full bg-zinc-900 border border-zinc-700 focus:border-apex-lime rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Preferred Time Slot</label>
+                    <select id="book-slot" class="w-full bg-zinc-900 border border-zinc-700 focus:border-apex-lime rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                        <option>Tomorrow • 06:30 AM</option>
+                        <option>Tomorrow • 12:00 PM</option>
+                        <option>Tomorrow • 05:30 PM</option>
+                        <option>Tomorrow • 07:00 PM</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-apex-lime hover:bg-apex-limeHover text-black font-extrabold py-3.5 rounded-xl text-xs tracking-wide transition-all neon-glow">
+                    CONFIRM RESERVATION
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- 1. MOBILE / DESKTOP VIEW SIMULATOR SWITCHER ---
+        function switchViewMode(mode) {
+            const wrapper = document.getElementById('simulator-wrapper');
+            const viewport = document.getElementById('app-viewport');
+            const btnMobile = document.getElementById('btn-sim-mobile');
+            const btnDesktop = document.getElementById('btn-sim-desktop');
+
+            if (mode === 'mobile') {
+                wrapper.classList.add('is-mobile-sim');
+                viewport.classList.add('mobile-frame');
+                btnMobile.className = 'px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all flex items-center gap-1.5 bg-apex-lime text-black shadow';
+                btnDesktop.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 text-zinc-400 hover:text-white';
+                showToast('📱 Switched to Mobile App Simulator (390px)');
+            } else {
+                wrapper.classList.remove('is-mobile-sim');
+                viewport.classList.remove('mobile-frame');
+                btnDesktop.className = 'px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all flex items-center gap-1.5 bg-apex-lime text-black shadow';
+                btnMobile.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 text-zinc-400 hover:text-white';
+                showToast('💻 Switched to Full Responsive Desktop View');
+            }
+        }
+
+        // Slide-Out Mobile Drawer
+        function toggleMobileDrawer(open) {
+            const drawer = document.getElementById('mobile-drawer');
+            const backdrop = document.getElementById('mobile-drawer-backdrop');
+            if (open) {
+                backdrop.classList.remove('hidden');
+                drawer.classList.remove('translate-x-full');
+            } else {
+                backdrop.classList.add('hidden');
+                drawer.classList.add('translate-x-full');
+            }
+        }
+
+        // Active state on sticky bottom navigation
+        function setActiveTab(el) {
+            document.querySelectorAll('.bottom-tab').forEach(t => {
+                t.classList.remove('text-apex-lime');
+                t.classList.add('text-zinc-400');
+            });
+            el.classList.add('text-apex-lime');
+            el.classList.remove('text-zinc-400');
+        }
+
+        // --- 2. DATA: CLASSES ---
+        const classesData = [
+            {
+                id: 1,
+                title: "TITAN BARBELL CLUB",
+                category: "strength",
+                categoryLabel: "Strength",
+                duration: "60 Min",
+                intensity: "High",
+                calories: "650 kcal",
+                trainer: "Marcus Vance",
+                spots: 4,
+                image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=800&q=80",
+                desc: "Master compound lifts—squat, deadlift, and bench—with progressive overload protocols."
+            },
+            {
+                id: 2,
+                title: "METCON INFERNO",
+                category: "hiit",
+                categoryLabel: "HIIT & Metcon",
+                duration: "45 Min",
+                intensity: "Extreme",
+                calories: "850 kcal",
+                trainer: "Elena Rostova",
+                spots: 3,
+                image: "https://images.unsplash.com/photo-1549060279-7e168fcee0c2?auto=format&fit=crop&w=800&q=80",
+                desc: "Assault bike sprints, sled pushes, kettlebells, and battle ropes for maximum afterburn."
+            },
+            {
+                id: 3,
+                title: "STRIKE & SHRED BOXING",
+                category: "boxing",
+                categoryLabel: "Boxing",
+                duration: "50 Min",
+                intensity: "High",
+                calories: "750 kcal",
+                trainer: "Elena Rostova",
+                spots: 7,
+                image: "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=800&q=80",
+                desc: "10 rounds of heavy bag combinations, footwork drills, and explosive core conditioning."
+            },
+            {
+                id: 4,
+                title: "NEON VELOCITY SPIN",
+                category: "spin",
+                categoryLabel: "Spin & Cardio",
+                duration: "45 Min",
+                intensity: "High",
+                calories: "700 kcal",
+                trainer: "Maya Lin",
+                spots: 5,
+                image: "https://images.unsplash.com/photo-1534258936925-c58bed479fcb?auto=format&fit=crop&w=800&q=80",
+                desc: "Dark-room watts training synced to live bass-heavy synthwave & EDM climbs."
+            },
+            {
+                id: 5,
+                title: "KINETIC MOBILITY FLOW",
+                category: "yoga",
+                categoryLabel: "Mobility",
+                duration: "50 Min",
+                intensity: "Moderate",
+                calories: "380 kcal",
+                trainer: "Maya Lin",
+                spots: 9,
+                image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80",
+                desc: "Decompress tight hips, thoracic spine, and shoulders with active fascia release."
+            },
+            {
+                id: 6,
+                title: "HYPERTROPHY LAB",
+                category: "strength",
+                categoryLabel: "Strength",
+                duration: "60 Min",
+                intensity: "High",
+                calories: "600 kcal",
+                trainer: "Devon Brooks",
+                spots: 2,
+                image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=800&q=80",
+                desc: "Targeted tempo sets and mechanical drop sets for maximum muscle growth."
+            }
+        ];
+
+        // --- 3. DATA: WEEKLY SCHEDULE ---
+        const scheduleData = {
+            Monday: [
+                { time: "06:00 AM", name: "TITAN BARBELL CLUB", trainer: "Marcus Vance", room: "Platform A", intensity: "High" },
+                { time: "09:30 AM", name: "METCON INFERNO", trainer: "Elena Rostova", room: "Turf Arena", intensity: "Extreme" },
+                { time: "12:00 PM", name: "STRIKE & SHRED BOXING", trainer: "Elena Rostova", room: "Combat Ring", intensity: "High" },
+                { time: "05:30 PM", name: "NEON VELOCITY SPIN", trainer: "Maya Lin", room: "Spin Studio", intensity: "High" }
+            ],
+            Tuesday: [
+                { time: "06:30 AM", name: "METCON INFERNO", trainer: "Elena Rostova", room: "Turf Arena", intensity: "Extreme" },
+                { time: "10:00 AM", name: "KINETIC MOBILITY FLOW", trainer: "Maya Lin", room: "Zen Studio", intensity: "Moderate" },
+                { time: "05:30 PM", name: "HYPERTROPHY LAB", trainer: "Devon Brooks", room: "Weight Pit", intensity: "High" }
+            ],
+            Wednesday: [
+                { time: "06:00 AM", name: "TITAN BARBELL CLUB", trainer: "Marcus Vance", room: "Platform A", intensity: "High" },
+                { time: "12:00 PM", name: "NEON VELOCITY SPIN", trainer: "Maya Lin", room: "Spin Studio", intensity: "High" },
+                { time: "05:30 PM", name: "METCON INFERNO", trainer: "Elena Rostova", room: "Turf Arena", intensity: "Extreme" }
+            ],
+            Thursday: [
+                { time: "06:30 AM", name: "HYPERTROPHY LAB", trainer: "Devon Brooks", room: "Weight Pit", intensity: "High" },
+                { time: "12:00 PM", name: "STRIKE & SHRED BOXING", trainer: "Elena Rostova", room: "Combat Ring", intensity: "High" },
+                { time: "06:00 PM", name: "DEADLIFT CLINIC", trainer: "Marcus Vance", room: "Platform A", intensity: "Extreme" }
+            ],
+            Friday: [
+                { time: "06:00 AM", name: "FRIDAY LIGHTS METCON", trainer: "Elena Rostova", room: "Turf Arena", intensity: "Extreme" },
+                { time: "12:00 PM", name: "TITAN BARBELL CLUB", trainer: "Marcus Vance", room: "Platform A", intensity: "High" },
+                { time: "05:00 PM", name: "PUMP & SHRED", trainer: "Devon Brooks", room: "Weight Pit", intensity: "High" }
+            ],
+            Saturday: [
+                { time: "09:00 AM", name: "TEAM WARRIOR GAUNTLET", trainer: "Marcus & Elena", room: "Main Turf", intensity: "Extreme" },
+                { time: "11:00 AM", name: "NEON VELOCITY SPIN", trainer: "Maya Lin", room: "Spin Studio", intensity: "High" }
+            ],
+            Sunday: [
+                { time: "10:00 AM", name: "SUNDAY RECOVERY FLOW", trainer: "Maya Lin", room: "Zen Studio", intensity: "Moderate" },
+                { time: "12:00 PM", name: "OPEN OLYMPIC LIFTING", trainer: "Marcus Vance", room: "Platform A", intensity: "Moderate" }
+            ]
+        };
+
+        // --- 4. RENDER CLASSES ---
+        function renderClasses(filter = 'all') {
+            const grid = document.getElementById('classes-grid');
+            const filtered = filter === 'all' ? classesData : classesData.filter(c => c.category === filter);
+
+            grid.innerHTML = filtered.map(cls => {
+                const badgeColor = cls.intensity === 'Extreme' 
+                    ? 'bg-apex-orange text-white' 
+                    : cls.intensity === 'High' 
+                        ? 'bg-apex-lime text-black' 
+                        : 'bg-emerald-400 text-black';
+
+                return `
+                    <div class="swipe-card min-w-[290px] md:min-w-0 snap-center bg-apex-card border border-apex-border rounded-2xl overflow-hidden flex flex-col justify-between group neon-border-glow transition-all">
+                        <div>
+                            <div class="relative h-48 overflow-hidden bg-zinc-900">
+                                <img src="${cls.image}" alt="${cls.title}" onerror="this.src='https://placehold.co/800x500/121216/ccff00?text=APEX+CLASS'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute inset-0 bg-gradient-to-t from-apex-card via-transparent to-black/40"></div>
+                                <span class="absolute top-3 left-3 ${badgeColor} text-[10px] font-extrabold px-2.5 py-1 rounded uppercase">
+                                    ${cls.intensity}
+                                </span>
+                                <span class="absolute top-3 right-3 bg-black/80 text-zinc-200 border border-zinc-700 text-[11px] font-semibold px-2.5 py-0.5 rounded">
+                                    ${cls.duration}
+                                </span>
+                                <div class="absolute bottom-2.5 left-3 right-3 flex justify-between items-center text-[11px] text-zinc-300">
+                                    <span class="font-bold text-apex-lime">${cls.categoryLabel}</span>
+                                    <span><i class="fa-solid fa-fire text-apex-orange mr-1"></i>${cls.calories}</span>
+                                </div>
+                            </div>
+
+                            <div class="p-5">
+                                <h3 class="font-display text-2xl font-bold text-white tracking-wide">${cls.title}</h3>
+                                <p class="text-zinc-400 text-xs leading-relaxed mt-1">${cls.desc}</p>
+                            </div>
+                        </div>
+
+                        <div class="px-5 pb-5 pt-3 border-t border-zinc-800/80 flex items-center justify-between">
+                            <div>
+                                <div class="text-[10px] text-zinc-500 uppercase font-bold">Coach</div>
+                                <div class="text-xs font-bold text-zinc-200">${cls.trainer}</div>
+                            </div>
+                            <button onclick="openBookingModal('${cls.title}', '${cls.duration} • ${cls.intensity} • Coach ${cls.trainer}')" class="bg-zinc-800 hover:bg-apex-lime hover:text-black text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all">
+                                BOOK (${cls.spots} left)
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        document.querySelectorAll('#class-filters .filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#class-filters .filter-btn').forEach(b => {
+                    b.className = 'filter-btn shrink-0 bg-apex-card hover:bg-zinc-800 text-zinc-300 border border-apex-border font-semibold px-4 py-2 rounded-xl text-xs transition-all';
+                });
+                btn.className = 'filter-btn shrink-0 active bg-apex-lime text-black font-bold px-4 py-2 rounded-xl text-xs transition-all';
+                renderClasses(btn.dataset.filter);
+            });
+        });
+
+        // --- 5. RENDER WEEKLY SCHEDULE ---
+        const days = Object.keys(scheduleData);
+        let activeDay = 'Monday';
+
+        function renderScheduleTabs() {
+            const tabsContainer = document.getElementById('schedule-tabs');
+            tabsContainer.innerHTML = days.map(day => {
+                const isActive = day === activeDay;
+                return `
+                    <button onclick="selectScheduleDay('${day}')" class="shrink-0 py-2.5 px-4 rounded-xl font-display text-xl tracking-wider uppercase font-bold transition-all ${
+                        isActive 
+                        ? 'bg-apex-lime text-black shadow neon-glow' 
+                        : 'bg-apex-dark text-zinc-400 hover:text-white border border-apex-border'
+                    }">
+                        ${day.slice(0, 3)}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function renderScheduleContent() {
+            const container = document.getElementById('schedule-content');
+            const sessions = scheduleData[activeDay];
+
+            container.innerHTML = `
+                <div class="divide-y divide-zinc-800">
+                    ${sessions.map(s => `
+                        <div class="schedule-row p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-zinc-900/50 transition-colors">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
+                                <div class="text-apex-lime font-mono font-bold text-xs flex items-center gap-1.5">
+                                    <i class="fa-regular fa-clock"></i> ${s.time}
+                                </div>
+                                <div>
+                                    <h4 class="font-display text-2xl font-bold text-white tracking-wide">${s.name}</h4>
+                                    <div class="text-xs text-zinc-400 flex flex-wrap gap-3">
+                                        <span>Coach: <strong class="text-zinc-200">${s.trainer}</strong></span>
+                                        <span>• ${s.room}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="openBookingModal('${s.name} (${activeDay})', '${s.time} • ${s.room} • Coach ${s.trainer}')" class="schedule-btn bg-zinc-800 hover:bg-apex-lime hover:text-black text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all">
+                                RESERVE SPOT →
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function selectScheduleDay(day) {
+            activeDay = day;
+            renderScheduleTabs();
+            renderScheduleContent();
+        }
+
+        // --- 6. BMI & CALORIE CALCULATOR ---
+        function calculateMetrics(e) {
+            if (e) e.preventDefault();
+            const gender = document.getElementById('calc-gender').value;
+            const age = parseFloat(document.getElementById('calc-age').value) || 28;
+            const weight = parseFloat(document.getElementById('calc-weight').value) || 78;
+            const heightCm = parseFloat(document.getElementById('calc-height').value) || 180;
+            const activity = parseFloat(document.getElementById('calc-activity').value) || 1.55;
+
+            const heightM = heightCm / 100;
+            const bmi = weight / (heightM * heightM);
+            const bmiRounded = bmi.toFixed(1);
+
+            let bmr = (10 * weight) + (6.25 * heightCm) - (5 * age);
+            bmr += (gender === 'male') ? 5 : -161;
+
+            const tdee = Math.round(bmr * activity);
+            const cut = Math.max(1200, tdee - 500);
+            const bulk = tdee + 350;
+
+            document.getElementById('res-bmi').textContent = bmiRounded;
+            document.getElementById('res-maintain').textContent = tdee.toLocaleString();
+            document.getElementById('res-cut').textContent = cut.toLocaleString();
+            document.getElementById('res-bulk').textContent = bulk.toLocaleString();
+
+            const statusEl = document.getElementById('res-bmi-status');
+            if (bmi < 18.5) {
+                statusEl.textContent = 'Underweight';
+                statusEl.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-500/20 text-sky-400 border border-sky-500/30';
+            } else if (bmi < 25) {
+                statusEl.textContent = 'Normal Weight';
+                statusEl.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+            } else if (bmi < 30) {
+                statusEl.textContent = 'Overweight';
+                statusEl.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30';
+            } else {
+                statusEl.textContent = 'Obese Class';
+                statusEl.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30';
+            }
+
+            if (e) showToast('Biometrics & Daily Macros updated!');
+        }
+
+        document.getElementById('bmi-form').addEventListener('submit', calculateMetrics);
+
+        // --- 7. PRICING TOGGLE ---
+        function setBilling(period) {
+            const btnMonthly = document.getElementById('toggle-monthly');
+            const btnAnnual = document.getElementById('toggle-annual');
+
+            if (period === 'annual') {
+                btnAnnual.className = 'px-4 py-2 rounded-xl text-xs font-bold bg-apex-lime text-black transition-all flex items-center gap-1.5';
+                btnMonthly.className = 'px-4 py-2 rounded-xl text-xs font-bold text-zinc-400 hover:text-white transition-all';
+                document.getElementById('price-basic').textContent = '39';
+                document.getElementById('price-pro').textContent = '71';
+                document.getElementById('price-elite').textContent = '119';
+            } else {
+                btnMonthly.className = 'px-4 py-2 rounded-xl text-xs font-bold bg-apex-lime text-black transition-all';
+                btnAnnual.className = 'px-4 py-2 rounded-xl text-xs font-bold text-zinc-400 hover:text-white transition-all flex items-center gap-1.5';
+                document.getElementById('price-basic').textContent = '49';
+                document.getElementById('price-pro').textContent = '89';
+                document.getElementById('price-elite').textContent = '149';
+            }
+        }
+
+        // --- 8. MODALS & TOASTS ---
+        function openJoinModal(planName = 'Free 7-Day Trial') {
+            const modal = document.getElementById('join-modal');
+            document.getElementById('join-form-container').classList.remove('hidden');
+            document.getElementById('join-success').classList.add('hidden');
+            document.getElementById('join-modal-badge').textContent = planName;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeJoinModal() {
+            const modal = document.getElementById('join-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        document.getElementById('join-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('join-name').value;
+            document.getElementById('join-form-container').classList.add('hidden');
+            document.getElementById('join-success').classList.remove('hidden');
+            document.getElementById('join-success-text').textContent = `Welcome ${name}! Scan this pass at the turnstile.`;
+            showToast(`QR Pass Activated for ${name}!`);
+        });
+
+        function openBookingModal(title, meta) {
+            const modal = document.getElementById('booking-modal');
+            document.getElementById('booking-title').textContent = title;
+            document.getElementById('booking-meta').textContent = meta;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeBookingModal() {
+            const modal = document.getElementById('booking-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        document.getElementById('booking-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('book-name').value;
+            const title = document.getElementById('booking-title').textContent;
+            closeBookingModal();
+            this.reset();
+            showToast(`Spot reserved for ${name} in ${title}!`);
+        });
+
+        document.getElementById('newsletter-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            this.reset();
+            showToast('Subscribed to APEX Dispatch!');
+        });
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'bg-zinc-900/95 border-l-4 border-apex-lime text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 text-xs font-semibold pointer-events-auto transition-all duration-300';
+            toast.innerHTML = `<i class="fa-solid fa-bolt text-apex-lime"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderClasses('all');
+            renderScheduleTabs();
+            renderScheduleContent();
+            calculateMetrics();
+        });
+    </script>
+</body>
+</html>
